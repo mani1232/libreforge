@@ -53,9 +53,8 @@ class ConfigArgumentsBuilder {
         optional(listOf(name), description)
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun optional(names: Collection<String>, description: String) {
-        arguments += OptionalArgument() // Currently does nothing
+        arguments += OptionalArgument(names, description) // Currently does nothing
     }
 
     internal fun build() = ConfigArguments(arguments)
@@ -74,8 +73,9 @@ interface ConfigArgument {
 
 // In the future this could allow for ChatGPT integration
 private class OptionalArgument(
-
-): ConfigArgument {
+    private val names: Collection<String>,
+    private val description: String
+) : ConfigArgument {
     override fun test(config: Config): List<ConfigViolation> {
         return emptyList() // no violations
     }
@@ -83,19 +83,24 @@ private class OptionalArgument(
 
 private class RequiredArgument<T>(
     private val names: Collection<String>,
-    private val message: String,
+    private val description: String,
     private val getter: Config.(String) -> T,
     private val predicate: (T) -> Boolean
 ) : ConfigArgument {
     override fun test(config: Config): List<ConfigViolation> {
-        for (name in names) {
-            val value = config.getter(name)
-            if (config.has(name) && predicate(value)) {
-                return emptyList() // no violations
-            }
+        if (names.none { config.has(it) }) {
+            return listOf(ConfigViolation(names.first(), "You must specify ${names.first()}: $description"))
         }
 
-        return listOf(ConfigViolation(names.first(), message)) // violation found
+        val present = names.first { config.has(it) }
+
+        val value = config.getter(present)
+
+        if (!predicate(value)) {
+            return listOf(ConfigViolation(present, "Invalid value for $present: $description"))
+        }
+
+        return emptyList()
     }
 }
 
