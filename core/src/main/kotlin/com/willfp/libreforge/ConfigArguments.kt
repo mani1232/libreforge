@@ -49,6 +49,15 @@ class ConfigArgumentsBuilder {
         arguments += InheritedArguments(getter, subsection)
     }
 
+    fun optional(name: String, description: String) {
+        optional(listOf(name), description)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun optional(names: Collection<String>, description: String) {
+        arguments += OptionalArgument() // Currently does nothing
+    }
+
     internal fun build() = ConfigArguments(arguments)
 }
 
@@ -61,6 +70,15 @@ interface ConfigArgument {
      * Null if valid.
      */
     fun test(config: Config): List<ConfigViolation>
+}
+
+// In the future this could allow for ChatGPT integration
+private class OptionalArgument(
+
+): ConfigArgument {
+    override fun test(config: Config): List<ConfigViolation> {
+        return emptyList() // no violations
+    }
 }
 
 private class RequiredArgument<T>(
