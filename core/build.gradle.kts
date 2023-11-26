@@ -3,8 +3,8 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("com.willfp:eco:6.65.0")
-    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("com.willfp:eco:6.67.0")
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.2.4")
@@ -14,7 +14,7 @@ dependencies {
     }
     compileOnly("com.github.Zrips:Jobs:v4.17.2")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("com.github.ben-manes.caffeine:caffeine:3.0.5")
+    compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
     compileOnly("com.github.brcdev-minecraft:shopgui-api:2.2.0")
     compileOnly("com.github.Gypopo:EconomyShopGUI-API:1.1.0")
     compileOnly("com.github.N0RSKA:ScytherAPI:55a")

@@ -8,7 +8,7 @@ internal object BoundCounters {
     private val bindings = listMap<Counter, BoundCounter>()
 
     fun bind(counter: Counter, accumulator: Accumulator) {
-        bindings[counter] += BoundCounter(counter, accumulator)
+        bindings[counter].add(BoundCounter(counter, accumulator))
     }
 
     fun unbind(counter: Counter) {

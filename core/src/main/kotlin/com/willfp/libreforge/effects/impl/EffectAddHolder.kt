@@ -42,10 +42,10 @@ object EffectAddHolder : Effect<HolderTemplate>("add_holder") {
         val duration = config.getIntFromExpression("duration", data)
         val holder = compileData.toHolder()
 
-        holders[player.uniqueId] += holder
+        holders[player.uniqueId].add(holder)
 
         plugin.scheduler.runLater(duration.toLong()) {
-            holders[player.uniqueId] -= holder
+            holders[player.uniqueId].remove(holder)
         }
 
         return true

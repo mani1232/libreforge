@@ -1,8 +1,8 @@
 dependencies {
     compileOnly(project(":core"))
 
-    compileOnly("com.willfp:eco:6.55.2")
-    compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("com.willfp:eco:6.67.0")
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
 }
 
 group = "com.willfp"

@@ -4,14 +4,14 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
     }
 }
 
 plugins {
     java
     id("java-library")
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("maven-publish")
 }
 
@@ -38,8 +38,8 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("org.jetbrains:annotations:23.0.0")
-        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
+        compileOnly("org.jetbrains:annotations:24.1.0")
+        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
 
         compileOnly(fileTree("lib") { include("*.jar") })
     }
