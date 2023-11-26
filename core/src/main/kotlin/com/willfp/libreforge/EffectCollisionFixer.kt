@@ -38,13 +38,13 @@ object EffectCollisionFixer : Listener {
 
         dispatcher.updateHolders()
 
-        plugin.scheduler.run {
+        plugin.scheduler.runNow ({
             dispatcher.updateEffects()
-        }
+        }, player.location)
     }
 
     private fun Player.fixAttributes() {
-        for (attribute in Attribute.values()) {
+        for (attribute in Attribute.entries) {
             val inst = this.getAttribute(attribute) ?: continue
             val mods = inst.modifiers.filter { it.name.startsWith("libreforge") }
             for (mod in mods) {
@@ -59,7 +59,7 @@ object EffectCollisionFixer : Listener {
 
         // Legacy fix
         for (effect in Effects.values()) {
-            for (attribute in Attribute.values()) {
+            for (attribute in Attribute.entries) {
                 val inst = this.getAttribute(attribute) ?: continue
                 val mods = inst.modifiers.filter { it.name.startsWith(effect.id) }
                 for (mod in mods) {

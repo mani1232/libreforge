@@ -86,10 +86,10 @@ object EffectGlowNearbyBlocks : Effect<NoCompileData>("glow_nearby_blocks") {
             team.addEntry(shulker.uniqueId.toString())
             block.setMetadata("gnb-uuid", plugin.metadataValueFactory.create(shulker.uniqueId))
 
-            plugin.scheduler.runLater(duration.toLong()) {
+            plugin.scheduler.runLater( {
                 shulker.remove()
                 block.removeMetadata("gnb-uuid", plugin)
-            }
+            }, duration.toLong(), shulker.location)
         }
 
         return true

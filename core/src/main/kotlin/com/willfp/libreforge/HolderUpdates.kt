@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -28,33 +28,43 @@ class ItemRefreshListener(
 
     @EventHandler
     fun onItemPickup(event: EntityPickupItemEvent) {
-        event.entity.toDispatcher().refreshHolders()
+        plugin.scheduler.runNow({
+            event.entity.toDispatcher().refreshHolders()
+        }, event.entity.location)
     }
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         Bukkit.getServer().onlinePlayers.forEach {
-            it.toDispatcher().refreshHolders()
+            plugin.scheduler.runNow({
+                it.toDispatcher().refreshHolders()
+            }, it.location)
         }
     }
 
     @EventHandler
     fun onInventoryDrop(event: PlayerDropItemEvent) {
-        event.player.toDispatcher().refreshHolders()
+        plugin.scheduler.runNow({
+            event.player.toDispatcher().refreshHolders()
+        }, event.player.location)
     }
 
     @EventHandler
     fun onChangeSlot(event: PlayerItemHeldEvent) {
         val dispatcher = event.player.toDispatcher()
-        dispatcher.refreshHolders()
-        plugin.scheduler.run {
+        plugin.scheduler.runNow({
             dispatcher.refreshHolders()
-        }
+        }, event.player.location)
+        plugin.scheduler.run({
+            dispatcher.refreshHolders()
+        }, event.player.location)
     }
 
     @EventHandler
     fun onArmorChange(event: ArmorChangeEvent) {
-        event.player.toDispatcher().refreshHolders()
+        plugin.scheduler.runNow({
+            event.player.toDispatcher().refreshHolders()
+        }, event.player.location)
     }
 
     @EventHandler
@@ -67,6 +77,8 @@ class ItemRefreshListener(
 
         inventoryClickTimeouts.put(player.uniqueId, Unit)
 
-        player.toDispatcher().refreshHolders()
+        plugin.scheduler.runNow({
+            player.toDispatcher().refreshHolders()
+        }, player.location)
     }
 }

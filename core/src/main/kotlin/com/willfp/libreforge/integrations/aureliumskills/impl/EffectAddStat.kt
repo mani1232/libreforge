@@ -42,8 +42,8 @@ object EffectAddStat : Effect<NoCompileData>("add_stat") {
         AureliumAPI.getPlugin().playerManager.getPlayerData(player)
             ?.removeStatModifier(identifiers.key.key, false)
 
-        plugin.scheduler.run {
+        plugin.scheduler.runNow ({
             AureliumAPI.getPlugin().health.reload(player)
-        }
+        }, player.location)
     }
 }

@@ -23,7 +23,7 @@ object EffectBrewTimeMultiplier : MultiplierEffect("brew_time_multiplier") {
 
         // 2 seconds later to allow for the brewing stand to update, I guess.
         // This is from old EcoSkills code
-        plugin.scheduler.runLater(2) {
+        plugin.scheduler.runLater( {
             val stand = player.openInventory.topInventory.holder
 
             if (stand is BrewingStand) {
@@ -33,6 +33,6 @@ object EffectBrewTimeMultiplier : MultiplierEffect("brew_time_multiplier") {
                     player.updateInventory()
                 }
             }
-        }
+        }, 2, player.location)
     }
 }

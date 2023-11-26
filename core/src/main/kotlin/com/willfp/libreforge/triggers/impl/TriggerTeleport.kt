@@ -17,7 +17,7 @@ object TriggerTeleport : Trigger("teleport") {
 
     @EventHandler(ignoreCancelled = true)
     fun handle(event: PlayerTeleportEvent) {
-        plugin.scheduler.run {
+        plugin.scheduler.runNow( {
             this.dispatch(
                 event.player.toDispatcher(),
                 TriggerData(
@@ -26,6 +26,6 @@ object TriggerTeleport : Trigger("teleport") {
                     text = event.cause.name.lowercase()
                 )
             )
-        }
+        }, event.player.location)
     }
 }

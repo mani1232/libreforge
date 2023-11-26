@@ -24,7 +24,7 @@ object TriggerSendMessage : Trigger("send_message") {
             return
         }
 
-        plugin.scheduler.run {
+        plugin.scheduler.runNow( {
             this.dispatch(
                 player.toDispatcher(),
                 TriggerData(
@@ -33,6 +33,6 @@ object TriggerSendMessage : Trigger("send_message") {
                     text = event.message
                 )
             )
-        }
+        }, player.location)
     }
 }

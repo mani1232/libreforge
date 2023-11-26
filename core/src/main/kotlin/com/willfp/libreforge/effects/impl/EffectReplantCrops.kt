@@ -119,7 +119,7 @@ object EffectReplantCrops : Effect<NoCompileData>("replant_crops") {
 
         data.age = 0
 
-        plugin.scheduler.run {
+        plugin.scheduler.runNow( {
             block.type = type
             block.blockData = data
 
@@ -135,7 +135,7 @@ object EffectReplantCrops : Effect<NoCompileData>("replant_crops") {
                     EquipmentSlot.HAND
                 )
             )
-        }
+        }, player.location)
     }
 
     private data class ReplantConfig(

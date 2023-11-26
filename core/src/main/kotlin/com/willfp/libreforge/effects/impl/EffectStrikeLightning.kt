@@ -23,7 +23,7 @@ object EffectStrikeLightning : Effect<NoCompileData>("strike_lightning") {
         for (i in 1..amount) {
             plugin.scheduler.runLater({
                 world.strikeLightning(location)
-            }, 1)
+            }, 1, location)
         }
 
         return true

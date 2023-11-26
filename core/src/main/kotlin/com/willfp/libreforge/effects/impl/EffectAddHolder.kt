@@ -44,9 +44,9 @@ object EffectAddHolder : Effect<HolderTemplate>("add_holder") {
 
         holders[player.uniqueId].add(holder)
 
-        plugin.scheduler.runLater(duration.toLong()) {
+        plugin.scheduler.runLater( {
             holders[player.uniqueId].remove(holder)
-        }
+        },duration.toLong(), player.location)
 
         return true
     }

@@ -116,7 +116,9 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
         // Poll for changes
         plugin.scheduler.runTimer(20, 20) {
             for (player in Bukkit.getOnlinePlayers()) {
-                player.toDispatcher().refreshHolders()
+                plugin.scheduler.runNow({
+                    player.toDispatcher().refreshHolders()
+                }, player.location)
             }
         }
 
@@ -130,7 +132,9 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
                 plugin.scheduler.runTimer(currentOffset, configYml.getInt("refresh.entities.interval").toLong()) {
                     for (entity in world.entities) {
                         if (entity is LivingEntity) {
-                            entity.toDispatcher().refreshHolders()
+                            plugin.scheduler.runNow({
+                                entity.toDispatcher().refreshHolders()
+                            }, entity.location)
                         }
                     }
                 }

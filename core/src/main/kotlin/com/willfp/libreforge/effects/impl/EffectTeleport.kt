@@ -17,7 +17,7 @@ object EffectTeleport : Effect<NoCompileData>("teleport") {
         val location = data.location ?: return false
         location.pitch = player.location.pitch
         location.yaw = player.location.yaw
-        player.teleport(location)
+        player.teleportAsync(location)
 
         return true
     }

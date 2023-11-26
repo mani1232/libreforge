@@ -54,7 +54,7 @@ object EffectDamageNearbyEntities : Effect<Collection<TestableEntity>>("damage_n
             }
 
             entity.setMetadata("ignore-nearby-damage", plugin.metadataValueFactory.create(true))
-            plugin.scheduler.runLater(5) { entity.removeMetadata("ignore-nearby-damage", plugin) }
+            plugin.scheduler.runLater( { entity.removeMetadata("ignore-nearby-damage", plugin) },5, entity.location)
 
             if (!damageSelf && (entity == player)) {
                 continue

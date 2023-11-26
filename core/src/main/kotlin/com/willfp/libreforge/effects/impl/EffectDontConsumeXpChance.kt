@@ -18,8 +18,8 @@ object EffectDontConsumeXpChance : ChanceMultiplierEffect("dont_consume_xp_chanc
         }
 
         // 2 Ticks because that's what I did in EcoSkills!
-        plugin.scheduler.runLater(2) {
+        plugin.scheduler.runLater( {
             player.giveExpLevels(cost)
-        }
+        }, 2,player.location)
     }
 }
