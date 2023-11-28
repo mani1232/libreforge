@@ -17,6 +17,7 @@ import com.willfp.libreforge.integrations.levelledmobs.LevelledMobsIntegration
 import com.willfp.libreforge.integrations.mcmmo.McMMOIntegration
 import com.willfp.libreforge.integrations.paper.PaperIntegration
 import com.willfp.libreforge.integrations.scyther.ScytherIntegration
+import com.willfp.libreforge.integrations.tab.TabIntegration
 import com.willfp.libreforge.integrations.tmmobcoins.TMMobcoinsIntegration
 import com.willfp.libreforge.integrations.vault.VaultIntegration
 import com.willfp.libreforge.integrations.worldguard.WorldGuardIntegration
@@ -166,6 +167,7 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
             IntegrationLoader("TMMobcoins") { TMMobcoinsIntegration.load(this) },
             IntegrationLoader("Vault") { VaultIntegration.load(this) },
             IntegrationLoader("WorldGuard") { WorldGuardIntegration.load(this) },
+            IntegrationLoader("TAB") { TabIntegration.load(this) },
         )
     }
 
@@ -177,7 +179,7 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
     }
 
     override fun getMinimumEcoVersion(): String {
-        return "6.63.0"
+        return "6.65.0"
     }
 
     /**
