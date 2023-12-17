@@ -28,6 +28,7 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        maven("https://nexuslite.gcnt.net/repos/other/")
         maven("https://repo.auxilor.io/repository/maven-public/")
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
