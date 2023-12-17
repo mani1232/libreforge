@@ -14,6 +14,7 @@ import com.willfp.libreforge.effects.Effect
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.effects.Identifiers
 import com.willfp.libreforge.get
+import com.willfp.libreforge.nest
 import com.willfp.libreforge.registerGenericHolderProvider
 import org.bukkit.Bukkit
 import java.util.Objects
@@ -23,7 +24,6 @@ import java.util.concurrent.TimeUnit
 object EffectAddPermanentHolderInRadius : Effect<HolderTemplate>("add_permanent_holder_in_radius") {
     override val arguments = arguments {
         require("effects", "You must specify the effects!")
-        // require("conditions", "You must specify the conditions!")
         require("radius", "You must specify the radius!")
     }
 
@@ -53,7 +53,7 @@ object EffectAddPermanentHolderInRadius : Effect<HolderTemplate>("add_permanent_
         val applyToSelf = config.getBool("apply-to-self")
 
         val nearbyHolder = PermanentNearbyHolder(
-            compileData.toHolder(identifiers.key),
+            compileData.toHolder(identifiers.key).nest(holder),
             radius,
             dispatcher.uuid,
             applyToSelf

@@ -205,3 +205,21 @@ data class HolderTemplate(
         conditions
     )
 }
+
+/**
+ * A nested holder has a parent, to allow passing through placeholders.
+ */
+class NestedHolder(
+    private val holder: Holder,
+    val parent: ProvidedHolder
+) : Holder by holder {
+    companion object {
+        init {
+            registerHolderPlaceholderProvider<NestedHolder> { h, dispatcher ->
+                h.parent.generatePlaceholders(dispatcher)
+            }
+        }
+    }
+}
+
+fun Holder.nest(parent: ProvidedHolder) = NestedHolder(this, parent)

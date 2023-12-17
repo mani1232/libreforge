@@ -3,7 +3,7 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("com.willfp:eco:6.67.0")
+    compileOnly("com.willfp:eco:6.67.2")
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 
@@ -22,6 +22,7 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.31-SNAPSHOT") {
         exclude(group = "net.byteflux", module = "libby-bukkit")
     }
+    compileOnly("com.dfsek.terra:common:6.4.1-BETA+3aef97738")
 
     compileOnly(fileTree("../lib") {
         include("*.jar")

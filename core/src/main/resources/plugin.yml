@@ -25,6 +25,7 @@ softdepend:
   - WorldGuard
   - Citizens
   - TAB
+  - Terra
 
 commands:
   lrcdb:

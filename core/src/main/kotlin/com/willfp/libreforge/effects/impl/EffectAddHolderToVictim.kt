@@ -11,6 +11,7 @@ import com.willfp.libreforge.conditions.Conditions
 import com.willfp.libreforge.effects.Effect
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.getIntFromExpression
+import com.willfp.libreforge.nest
 import com.willfp.libreforge.plugin
 import com.willfp.libreforge.registerGenericHolderProvider
 import com.willfp.libreforge.triggers.TriggerData
@@ -25,7 +26,6 @@ object EffectAddHolderToVictim : Effect<HolderTemplate>("add_holder_to_victim") 
 
     override val arguments = arguments {
         require("effects", "You must specify the effects!")
-        // require("conditions", "You must specify the conditions!")
         require("duration", "You must specify the duration (in ticks)!")
     }
 
@@ -39,7 +39,7 @@ object EffectAddHolderToVictim : Effect<HolderTemplate>("add_holder_to_victim") 
         val player = data.victim as? Player ?: return false
 
         val duration = config.getIntFromExpression("duration", data)
-        val holder = compileData.toHolder()
+        val holder = compileData.toHolder().nest(data.holder)
 
         holders[player.uniqueId].add(holder)
 
