@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.21")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22")
     }
 }
 
@@ -40,7 +40,7 @@ allprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:24.1.0")
-        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
+        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.22")
 
         compileOnly(fileTree("lib") { include("*.jar") })
     }
