@@ -2,8 +2,9 @@ dependencies {
     implementation("dev.romainguy:kotlin-math:1.5.3") {
         isTransitive = false
     }
+    implementation("com.willfp:ModelEngineBridge:1.3.0")
 
-    compileOnly("com.willfp:eco:6.67.2")
+    compileOnly("com.willfp:eco:6.68.3")
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 
@@ -44,6 +45,7 @@ tasks {
     shadowJar {
         relocate("dev.romainguy.kotlin.math", "com.willfp.libreforge.libs.math")
         relocate("org.apache.maven", "com.willfp.eco.libs.maven")
+        relocate("com.willfp.modelenginebridge", "com.willfp.libreforge.libs.modelenginebridge")
     }
 
     build {

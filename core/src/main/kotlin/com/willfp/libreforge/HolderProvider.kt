@@ -2,9 +2,11 @@ package com.willfp.libreforge
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.willfp.eco.core.map.listMap
-import com.willfp.libreforge.GlobalDispatcher.dispatcher
 import com.willfp.libreforge.effects.EffectBlock
+import com.willfp.libreforge.slot.ItemHolderFinder
+import com.willfp.libreforge.slot.SlotTypes
 import org.bukkit.Bukkit
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
@@ -19,6 +21,13 @@ interface HolderProvider {
      * Provide the holders.
      */
     fun provide(dispatcher: Dispatcher<*>): Collection<ProvidedHolder>
+}
+
+/**
+ * A typed holder provider.
+ */
+interface TypedHolderProvider<T: Holder> : HolderProvider {
+    override fun provide(dispatcher: Dispatcher<*>): Collection<TypedProvidedHolder<T>>
 }
 
 class HolderProvideEvent(
@@ -141,6 +150,12 @@ inline fun <reified T> registerSpecificHolderProvider(crossinline provider: (T) 
             }
         }
     })
+
+fun registerSlotHolderFinderAsProvider(finder: ItemHolderFinder<*>) =
+    registerSpecificHolderProvider<LivingEntity> {
+        SlotTypes.values()
+            .flatMap { slot -> finder.findHolders(it, slot) }
+    }
 
 private val refreshFunctions = mutableListOf<(Dispatcher<*>) -> Unit>()
 
@@ -281,6 +296,13 @@ val Dispatcher<*>.holders: Collection<ProvidedHolder>
         holders
     }
 
+/**
+ * Get holders of a specific type.
+ */
+inline fun <reified T: Holder> Dispatcher<*>.getHoldersOfType(): Collection<T> {
+    return this.holders.mapNotNull { it.holder as? T }
+}
+
 @Deprecated(
     "Use a dispatcher instead of a player",
     ReplaceWith("toDispatcher().holders"),
@@ -304,8 +326,10 @@ fun Dispatcher<*>.updateHolders() {
 fun Player.updateHolders() =
     this.toDispatcher().updateHolders()
 
-fun Dispatcher<*>.purgePreviousHolders() {
+internal fun Dispatcher<*>.purgePreviousHolders() {
     previousHolders.remove(this.uuid)
+    previousStates.remove(this.uuid)
+    flattenedPreviousStates.remove(this.uuid)
 }
 
 // Effects that were active on previous update

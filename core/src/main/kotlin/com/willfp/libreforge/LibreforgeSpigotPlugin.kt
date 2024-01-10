@@ -13,9 +13,11 @@ import com.willfp.libreforge.effects.impl.bossbar.BossBarProgressPlaceholder
 import com.willfp.libreforge.integrations.aureliumskills.AureliumSkillsIntegration
 import com.willfp.libreforge.integrations.citizens.CitizensIntegration
 import com.willfp.libreforge.integrations.custombiomes.impl.CustomBiomesTerra
+import com.willfp.libreforge.integrations.custombiomes.impl.CustomBiomesTerraformGenerator
 import com.willfp.libreforge.integrations.jobs.JobsIntegration
 import com.willfp.libreforge.integrations.levelledmobs.LevelledMobsIntegration
 import com.willfp.libreforge.integrations.mcmmo.McMMOIntegration
+import com.willfp.libreforge.integrations.modelengine.ModelEngineIntegration
 import com.willfp.libreforge.integrations.paper.PaperIntegration
 import com.willfp.libreforge.integrations.scyther.ScytherIntegration
 import com.willfp.libreforge.integrations.tab.TabIntegration
@@ -151,10 +153,16 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
     }
 
     override fun loadListeners(): List<Listener> {
-        return listOf(
-            EffectCollisionFixer,
+        val listeners = mutableListOf(
+            EffectDataFixer,
             ItemRefreshListener(this)
         )
+
+        if (Prerequisite.HAS_PAPER.isMet) {
+            listeners += PaperEffectDataFixer
+        }
+
+        return listeners
     }
 
     override fun loadIntegrationLoaders(): List<IntegrationLoader> {
@@ -169,7 +177,9 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
             IntegrationLoader("Vault") { VaultIntegration.load(this) },
             IntegrationLoader("WorldGuard") { WorldGuardIntegration.load(this) },
             IntegrationLoader("TAB") { TabIntegration.load(this) },
-            IntegrationLoader("Terra") { CustomBiomesTerra.load(this) }
+            IntegrationLoader("Terra") { CustomBiomesTerra.load(this) },
+            IntegrationLoader("TerraformGenerator") { CustomBiomesTerraformGenerator.load(this) },
+            IntegrationLoader("ModelEngine") { ModelEngineIntegration.load(this) }
         )
     }
 
