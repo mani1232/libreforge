@@ -4,7 +4,7 @@ dependencies {
     }
     implementation("com.willfp:ModelEngineBridge:1.3.0")
 
-    compileOnly("com.willfp:eco:6.68.3")
+    compileOnly("com.willfp:eco:6.68.5")
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 
