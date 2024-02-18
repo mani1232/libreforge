@@ -13,7 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -29,61 +29,73 @@ class ItemRefreshListener(
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onItemPickup(event: EntityPickupItemEvent) {
-        if (plugin.configYml.getBool("refresh.pickup.require-meta")) {
-            if (!event.item.itemStack.hasItemMeta()) {
-                return
+        Bukkit.getServer().regionScheduler.execute(plugin, event.entity.location) {
+            if (plugin.configYml.getBool("refresh.pickup.require-meta")) {
+                if (!event.item.itemStack.hasItemMeta()) {
+                    return@execute
+                }
             }
-        }
 
-        event.entity.toDispatcher().refreshHolders()
+            event.entity.toDispatcher().refreshHolders()
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        Bukkit.getServer().onlinePlayers.forEach {
-            it.toDispatcher().refreshHolders()
+        Bukkit.getServer().regionScheduler.execute(plugin, event.player.location) {
+            Bukkit.getServer().onlinePlayers.forEach {
+                it.toDispatcher().refreshHolders()
+            }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onInventoryDrop(event: PlayerDropItemEvent) {
-        event.player.toDispatcher().refreshHolders()
+        Bukkit.getServer().regionScheduler.execute(plugin, event.player.location) {
+            event.player.toDispatcher().refreshHolders()
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onChangeSlot(event: PlayerItemHeldEvent) {
-        val player = event.player
+        Bukkit.getServer().regionScheduler.execute(plugin, event.player.location) {
+            val player = event.player
 
-        if (plugin.configYml.getBool("refresh.held.require-meta")) {
-            val oldItem = player.inventory.getItem(event.previousSlot)
-            val newItem = player.inventory.getItem(event.newSlot)
-            if (((oldItem == null) || !oldItem.hasItemMeta()) && ((newItem == null) || !newItem.hasItemMeta())) {
-                return
+            if (plugin.configYml.getBool("refresh.held.require-meta")) {
+                val oldItem = player.inventory.getItem(event.previousSlot)
+                val newItem = player.inventory.getItem(event.newSlot)
+                if (((oldItem == null) || !oldItem.hasItemMeta()) && ((newItem == null) || !newItem.hasItemMeta())) {
+                    return@execute
+                }
             }
-        }
 
-        val dispatcher = player.toDispatcher()
+            val dispatcher = player.toDispatcher()
 
-        plugin.scheduler.run {
-            dispatcher.refreshHolders()
+            Bukkit.getServer().regionScheduler.execute(plugin, player.location) {
+                dispatcher.refreshHolders()
+            }
         }
     }
 
     @EventHandler
     fun onArmorChange(event: ArmorChangeEvent) {
-        event.player.toDispatcher().refreshHolders()
+        Bukkit.getServer().regionScheduler.execute(plugin, event.player.location) {
+            event.player.toDispatcher().refreshHolders()
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
 
-        if (inventoryClickTimeouts.getIfPresent(player.uniqueId) != null) {
-            return
+        Bukkit.getServer().regionScheduler.execute(plugin, player.location) {
+            if (inventoryClickTimeouts.getIfPresent(player.uniqueId) != null) {
+                return@execute
+            }
+
+            inventoryClickTimeouts.put(player.uniqueId, Unit)
+
+            player.toDispatcher().refreshHolders()
         }
-
-        inventoryClickTimeouts.put(player.uniqueId, Unit)
-
-        player.toDispatcher().refreshHolders()
     }
 }
