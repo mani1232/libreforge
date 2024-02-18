@@ -3,8 +3,6 @@ package com.willfp.libreforge.effects.impl
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.libreforge.Dispatcher
-import com.willfp.libreforge.EmptyProvidedHolder.holder
-import com.willfp.libreforge.GlobalDispatcher.location
 import com.willfp.libreforge.Holder
 import com.willfp.libreforge.HolderTemplate
 import com.willfp.libreforge.SimpleProvidedHolder
@@ -19,7 +17,6 @@ import com.willfp.libreforge.nest
 import com.willfp.libreforge.plugin
 import com.willfp.libreforge.registerGenericHolderProvider
 import com.willfp.libreforge.triggers.TriggerData
-import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.Location
 import java.util.Objects
 import java.util.UUID
@@ -42,6 +39,8 @@ object EffectAddHolderInRadius : Effect<HolderTemplate>("add_holder_in_radius") 
 
     init {
         registerGenericHolderProvider { dispatcher ->
+            if (holders.isEmpty()) return@registerGenericHolderProvider emptyList()
+
             nearbyCache.get(dispatcher.uuid) { _ ->
                 holders.filter { it.canApplyTo(dispatcher) }
                     .map { SimpleProvidedHolder(it.holder) }
@@ -98,9 +97,9 @@ object EffectAddHolderInRadius : Effect<HolderTemplate>("add_holder_in_radius") 
         val applyToSelf: Boolean
     ) {
         fun canApplyTo(dispatcher: Dispatcher<*>): Boolean {
-            val location = dispatcher.location ?: return false
+            val otherLocation = dispatcher.location ?: return false
 
-            if (location.world != location.world) {
+            if (location.world != otherLocation.world) {
                 return false
             }
 
@@ -108,7 +107,7 @@ object EffectAddHolderInRadius : Effect<HolderTemplate>("add_holder_in_radius") 
                 return false
             }
 
-            if (location.toVector().distanceSquared(location.toVector()) > radius * radius) {
+            if (location.toVector().distanceSquared(otherLocation.toVector()) > radius * radius) {
                 return false
             }
 

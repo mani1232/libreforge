@@ -6,13 +6,14 @@ import com.willfp.eco.core.events.ArmorChangeEvent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -26,48 +27,54 @@ class ItemRefreshListener(
         )
         .build<UUID, Unit>()
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onItemPickup(event: EntityPickupItemEvent) {
-        plugin.scheduler.runNow({
-            event.entity.toDispatcher().refreshHolders()
-        }, event.entity.location)
+        if (plugin.configYml.getBool("refresh.pickup.require-meta")) {
+            if (!event.item.itemStack.hasItemMeta()) {
+                return
+            }
+        }
+
+        event.entity.toDispatcher().refreshHolders()
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerJoin(event: PlayerJoinEvent) {
         Bukkit.getServer().onlinePlayers.forEach {
-            plugin.scheduler.runNow({
-                it.toDispatcher().refreshHolders()
-            }, it.location)
+            it.toDispatcher().refreshHolders()
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onInventoryDrop(event: PlayerDropItemEvent) {
+        event.player.toDispatcher().refreshHolders()
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    fun onChangeSlot(event: PlayerItemHeldEvent) {
+        val player = event.player
+
+        if (plugin.configYml.getBool("refresh.held.require-meta")) {
+            val oldItem = player.inventory.getItem(event.previousSlot)
+            val newItem = player.inventory.getItem(event.newSlot)
+            if (((oldItem == null) || !oldItem.hasItemMeta()) && ((newItem == null) || !newItem.hasItemMeta())) {
+                return
+            }
+        }
+
+        val dispatcher = player.toDispatcher()
+
+        plugin.scheduler.run {
+            dispatcher.refreshHolders()
         }
     }
 
     @EventHandler
-    fun onInventoryDrop(event: PlayerDropItemEvent) {
-        plugin.scheduler.runNow({
-            event.player.toDispatcher().refreshHolders()
-        }, event.player.location)
-    }
-
-    @EventHandler
-    fun onChangeSlot(event: PlayerItemHeldEvent) {
-        val dispatcher = event.player.toDispatcher()
-        plugin.scheduler.runNow({
-            dispatcher.refreshHolders()
-        }, event.player.location)
-        plugin.scheduler.run({
-            dispatcher.refreshHolders()
-        }, event.player.location)
-    }
-
-    @EventHandler
     fun onArmorChange(event: ArmorChangeEvent) {
-        plugin.scheduler.runNow({
-            event.player.toDispatcher().refreshHolders()
-        }, event.player.location)
+        event.player.toDispatcher().refreshHolders()
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
 
@@ -77,8 +84,6 @@ class ItemRefreshListener(
 
         inventoryClickTimeouts.put(player.uniqueId, Unit)
 
-        plugin.scheduler.runNow({
-            player.toDispatcher().refreshHolders()
-        }, player.location)
+        player.toDispatcher().refreshHolders()
     }
 }

@@ -14,15 +14,13 @@ object TriggerSendMessage : Trigger("send_message") {
     override val parameters = setOf(
         TriggerParameter.PLAYER,
         TriggerParameter.LOCATION,
-        TriggerParameter.TEXT
+        TriggerParameter.TEXT,
+        TriggerParameter.EVENT
     )
 
     @EventHandler(ignoreCancelled = true)
     fun handle(event: AsyncPlayerChatEvent) {
         val player = event.player
-        if (event.isCancelled) {
-            return
-        }
 
         plugin.scheduler.runNow( {
             this.dispatch(
@@ -30,7 +28,8 @@ object TriggerSendMessage : Trigger("send_message") {
                 TriggerData(
                     player = player,
                     location = player.location,
-                    text = event.message
+                    text = event.message,
+                    event = event
                 )
             )
         }, player.location)

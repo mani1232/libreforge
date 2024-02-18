@@ -6,7 +6,6 @@ import com.willfp.libreforge.triggers.Trigger
 import com.willfp.libreforge.triggers.TriggerData
 import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.event.EventHandler
-import org.bukkit.event.enchantment.EnchantItemEvent
 import org.bukkit.event.inventory.SmithItemEvent
 
 object TriggerSmithItem : Trigger("smith_item") {

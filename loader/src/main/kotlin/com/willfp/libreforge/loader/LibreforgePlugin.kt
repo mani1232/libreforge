@@ -79,15 +79,6 @@ abstract class LibreforgePlugin : EcoPlugin() {
                 loadCategory(category)
             }
         }
-
-        onDisable(LifecyclePosition.END) {
-            for (category in loaderCategories) {
-                withLogs(category, "clear") {
-                    category.clear(this)
-                    category.handle.clear()
-                }
-            }
-        }
     }
 
     private fun loadCategory(category: ConfigCategory, preload: Boolean = false) {
@@ -156,10 +147,16 @@ abstract class LibreforgePlugin : EcoPlugin() {
 
     private fun copyConfigs(category: ConfigCategory) {
         val folder = dataFolder.resolve(category.directory)
+        val configNames = getDefaultConfigNames(category)
+
         if (!folder.exists()) {
-            getDefaultConfigNames(category).forEach { configName ->
-                FoundConfig(configName, category.directory, this).copy()
+            for (name in configNames) {
+                FoundConfig(name, category.directory, this).copy()
             }
+        }
+
+        for (exampleConfigs in configNames.filter { it.startsWith("_") }) {
+            FoundConfig(exampleConfigs, category.directory, this).copy()
         }
     }
 

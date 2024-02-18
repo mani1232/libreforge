@@ -4,10 +4,8 @@ import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.Trigger
 import com.willfp.libreforge.triggers.TriggerData
 import com.willfp.libreforge.triggers.TriggerParameter
-import org.bukkit.entity.Item
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerAdvancementDoneEvent
-import org.bukkit.event.player.PlayerFishEvent
 
 object TriggerCompleteAdvancement : Trigger("complete_advancement") {
     override val parameters = setOf(

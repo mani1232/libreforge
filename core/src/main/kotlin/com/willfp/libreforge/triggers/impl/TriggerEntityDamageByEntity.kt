@@ -7,11 +7,7 @@ import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.entity.EntityCombustByBlockEvent
-import org.bukkit.event.entity.EntityCombustByEntityEvent
-import org.bukkit.event.entity.EntityCombustEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
 
 object TriggerEntityDamageByEntity : Trigger("entity_damage_by_entity") {
     override val parameters = setOf(

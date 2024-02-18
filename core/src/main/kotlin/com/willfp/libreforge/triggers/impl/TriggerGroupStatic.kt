@@ -10,6 +10,7 @@ import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.Bukkit
 import org.bukkit.FluidCollisionMode
 import org.bukkit.entity.Player
+import java.lang.RuntimeException
 
 object TriggerGroupStatic : TriggerGroup("static") {
     private val registry = mutableMapOf<Int, TriggerStatic>()
@@ -17,9 +18,12 @@ object TriggerGroupStatic : TriggerGroup("static") {
 
     override fun create(value: String): Trigger? {
         val interval = value.toIntOrNull() ?: return null
-        val trigger = TriggerStatic(interval)
-        registry[interval] = trigger
-        return trigger
+
+        if (interval < 1) {
+            return null
+        }
+
+        return registry.getOrPut(interval) { TriggerStatic(interval) }
     }
 
     override fun postRegister() {

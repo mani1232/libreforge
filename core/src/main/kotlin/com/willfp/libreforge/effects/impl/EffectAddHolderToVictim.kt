@@ -41,11 +41,14 @@ object EffectAddHolderToVictim : Effect<HolderTemplate>("add_holder_to_victim") 
         val duration = config.getIntFromExpression("duration", data)
         val holder = compileData.toHolder().nest(data.holder)
 
-        holders[player.uniqueId].add(holder)
+        holders[player.uniqueId] += holder
 
-        plugin.scheduler.runLater( {
-            holders[player.uniqueId].remove(holder)
-        }, duration.toLong(), player.location)
+        plugin.scheduler.runLater(duration.toLong()) {
+            holders[player.uniqueId] -= holder
+            if (holders[player.uniqueId].isEmpty()) {
+                holders -= player.uniqueId
+            }
+        }
 
         return true
     }

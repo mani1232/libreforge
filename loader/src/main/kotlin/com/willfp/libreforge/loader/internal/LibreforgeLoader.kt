@@ -3,6 +3,7 @@ package com.willfp.libreforge.loader.internal
 import com.willfp.eco.core.data.readExternalData
 import com.willfp.eco.core.data.writeExternalData
 import com.willfp.eco.core.version.Version
+import com.willfp.libreforge.LibreforgeSpigotPlugin
 import com.willfp.libreforge.loader.LibreforgePlugin
 import org.bukkit.Bukkit
 import java.io.File
@@ -72,5 +73,5 @@ internal fun loadHighestLibreforgeVersion(pluginFolder: File) {
         }
     }
 
-    Bukkit.getPluginManager().loadPlugin(libreforgeJar)
+    Bukkit.getPluginManager().loadPlugin(libreforgeJar) as LibreforgeSpigotPlugin
 }

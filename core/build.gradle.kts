@@ -4,8 +4,8 @@ dependencies {
     }
     implementation("com.willfp:ModelEngineBridge:1.3.0")
 
-    compileOnly("com.willfp:eco:6.68.5")
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("com.willfp:eco:6.69.0")
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.2.4")

@@ -1,9 +1,11 @@
 package com.willfp.libreforge
 
+import com.gmail.nossr50.mcMMO.p
 import com.willfp.eco.core.EcoPlugin
 import com.willfp.eco.core.Prerequisite
 import com.willfp.eco.core.command.impl.PluginCommand
 import com.willfp.eco.core.integrations.IntegrationLoader
+import com.willfp.eco.core.integrations.afk.AFKManager
 import com.willfp.libreforge.commands.CommandLibreforge
 import com.willfp.libreforge.configs.ChainsYml
 import com.willfp.libreforge.configs.lrcdb.CommandLrcdb
@@ -118,11 +120,14 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
         dispatchedTriggerFactory.startTicking()
 
         // Poll for changes
+        val skipAFKPlayers = configYml.getBool("refresh.players.skip-afk-players")
         plugin.scheduler.runTimer(20, 20) {
             for (player in Bukkit.getOnlinePlayers()) {
-                plugin.scheduler.runNow({
-                    player.toDispatcher().refreshHolders()
-                }, player.location)
+                if (skipAFKPlayers && AFKManager.isAfk(player)) {
+                    continue
+                }
+
+                player.toDispatcher().refreshHolders()
             }
         }
 
@@ -136,9 +141,7 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
                 plugin.scheduler.runTimer(currentOffset, configYml.getInt("refresh.entities.interval").toLong()) {
                     for (entity in world.entities) {
                         if (entity is LivingEntity) {
-                            plugin.scheduler.runNow({
-                                entity.toDispatcher().refreshHolders()
-                            }, entity.location)
+                            entity.toDispatcher().refreshHolders()
                         }
                     }
                 }
@@ -191,7 +194,7 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
     }
 
     override fun getMinimumEcoVersion(): String {
-        return "6.65.0"
+        return "6.69.0"
     }
 
     /**
@@ -201,7 +204,7 @@ class LibreforgeSpigotPlugin : EcoPlugin() {
         if (hasLoaded) {
             runnable()
         } else {
-            onReload(runnable)
+            onCreateTasks(runnable)
         }
     }
 }

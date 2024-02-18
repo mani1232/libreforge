@@ -2,19 +2,21 @@ package com.willfp.libreforge.triggers
 
 import com.willfp.eco.core.registry.KRegistrable
 import com.willfp.libreforge.Dispatcher
+import com.willfp.libreforge.EmptyProvidedHolder.holder
 import com.willfp.libreforge.ProvidedEffectBlock
-import com.willfp.libreforge.ProvidedEffectBlocks
 import com.willfp.libreforge.ProvidedHolder
 import com.willfp.libreforge.counters.bind.BoundCounters
 import com.willfp.libreforge.counters.bind.BoundCounters.bindings
 import com.willfp.libreforge.generatePlaceholders
 import com.willfp.libreforge.getProvidedActiveEffects
+import com.willfp.libreforge.notNullMutableMapOf
 import com.willfp.libreforge.plugin
 import com.willfp.libreforge.providedActiveEffects
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.event.TriggerDispatchEvent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.event.Cancellable
 import org.bukkit.event.Listener
 
 abstract class Trigger(
@@ -65,18 +67,20 @@ abstract class Trigger(
     /**
      * Dispatch the trigger on a collection of [ProvidedEffectBlock]s.
      */
-    fun dispatchOnEffects(
+    private fun dispatchOnEffects(
         dispatcher: Dispatcher<*>,
         data: TriggerData,
-        effects: Collection<ProvidedEffectBlocks>
+        effects: List<ProvidedEffectBlock>
     ) {
-        val dispatch = plugin.dispatchedTriggerFactory.create(dispatcher, this, data) ?: return
+        val counters = BoundCounters.values()
 
         // Prevent dispatching useless triggers
-        val potentialDestinations = effects.flatMap { it.effects } + BoundCounters.values()
+        val potentialDestinations = effects.map { it.effect } + counters
         if (potentialDestinations.none { it.canBeTriggeredBy(this) }) {
             return
         }
+
+        val dispatch = plugin.dispatchedTriggerFactory.create(dispatcher, this, data) ?: return
 
         dispatch.generatePlaceholders()
 
@@ -87,29 +91,47 @@ abstract class Trigger(
             return
         }
 
-        for ((holder, blocks) in effects) {
-            // Check again here to avoid generating placeholders for nothing
-            if (blocks.none { it.canBeTriggeredBy(this) }) {
-                continue
-            }
+        // Filter out effects that can't be triggered by this trigger as an optimization
+        val triggerableEffects = mutableListOf<ProvidedEffectBlock>()
 
+        for (block in effects) {
+            if (block.effect.canBeTriggeredBy(this)) {
+                // Effects are already sorted by priority
+                triggerableEffects.add(block)
+            }
+        }
+
+        // Only calculate placeholders once per holder
+        val holderDispatches = mutableMapOf<ProvidedHolder, DispatchedTrigger>()
+
+        for ((_, holder) in triggerableEffects) {
             val withHolder = dispatch.data.copy().apply {
                 this.holder = holder
             }
 
             val dispatchWithHolder = DispatchedTrigger(dispatcher, this, withHolder).inheritPlaceholders(dispatch)
 
-            for (placeholder in holder.generatePlaceholders(dispatcher)) {
-                dispatchWithHolder.addPlaceholder(placeholder)
+            holder.generatePlaceholders(dispatcher).forEach {
+                dispatchWithHolder.addPlaceholder(it)
             }
 
-            for (block in blocks) {
-                block.tryTrigger(dispatchWithHolder)
+            holderDispatches[holder] = dispatchWithHolder
+        }
+
+        // Finally, trigger effects
+        for ((block, holder) in triggerableEffects) {
+            // Fixes cancel_event not working
+            if (data.event is Cancellable && data.event.isCancelled) {
+                return
             }
+
+            val dispatchWithHolder = holderDispatches[holder] ?: continue
+
+            block.tryTrigger(dispatchWithHolder)
         }
 
         // Probably a better way to work with counters, but this works for now.
-        for (counter in BoundCounters.values()) {
+        for (counter in counters) {
             counter.bindings.forEach { it.accept(dispatch) }
         }
     }
