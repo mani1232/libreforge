@@ -1,6 +1,5 @@
 package com.willfp.libreforge
 
-import com.gmail.nossr50.mcMMO.p
 import com.willfp.eco.core.EcoPlugin
 import com.willfp.eco.core.Prerequisite
 import com.willfp.eco.core.command.impl.PluginCommand
@@ -27,12 +26,7 @@ import com.willfp.libreforge.integrations.tmmobcoins.TMMobcoinsIntegration
 import com.willfp.libreforge.integrations.vault.VaultIntegration
 import com.willfp.libreforge.integrations.worldguard.WorldGuardIntegration
 import com.willfp.libreforge.levels.LevelTypes
-import com.willfp.libreforge.levels.placeholder.ItemDataPlaceholder
-import com.willfp.libreforge.levels.placeholder.ItemLevelPlaceholder
-import com.willfp.libreforge.levels.placeholder.ItemPointsPlaceholder
-import com.willfp.libreforge.levels.placeholder.ItemProgressPlaceholder
-import com.willfp.libreforge.levels.placeholder.ItemXPPlaceholder
-import com.willfp.libreforge.levels.placeholder.ItemXPRequiredPlaceholder
+import com.willfp.libreforge.levels.placeholder.*
 import com.willfp.libreforge.placeholders.CustomPlaceholders
 import com.willfp.libreforge.triggers.DispatchedTriggerFactory
 import org.bukkit.Bukkit
